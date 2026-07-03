@@ -91,14 +91,20 @@ async def voice_ws(ws: WebSocket) -> None:
 def _process(session_id: str, audio_path: str) -> VoiceTicketResult:
     tr = get_transcriber().transcribe_file(audio_path)
     classification = tickets.classify(tr.text)
-    ticket_number = tickets.next_ticket_number()
-    logger.info("voice session %s → %s (stub_stt=%s)", session_id, ticket_number, tr.stub)
+    ticket = tickets.create_ticket(
+        raw_text=tr.text,
+        classification=classification,
+        language=tr.language,
+        source="voice",
+        stub_stt=tr.stub,
+    )
+    logger.info("voice session %s → %s (stub_stt=%s)", session_id, ticket.ticket_number, tr.stub)
     return VoiceTicketResult(
         session_id=session_id,
         transcript=tr.text,
         language=tr.language,
         classification=classification,
-        ticket_number=ticket_number,
-        status="pending_review",
+        ticket_number=ticket.ticket_number,
+        status=ticket.status,
         stub_stt=tr.stub,
     )

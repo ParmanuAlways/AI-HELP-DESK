@@ -15,12 +15,14 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import get_settings
-from backend.routers import voice
+from backend.database import init_db
+from backend.routers import admin, voice
 
 logging.basicConfig(level=logging.INFO)
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name)
+init_db()
 
 # Dev CORS: the "caller" PC opens the page over the LAN. Tighten in prod.
 app.add_middleware(
@@ -31,6 +33,7 @@ app.add_middleware(
 )
 
 app.include_router(voice.router)
+app.include_router(admin.router)
 
 _FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "voice_poc")
 
@@ -43,6 +46,11 @@ def health() -> dict:
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(os.path.join(_FRONTEND_DIR, "index.html"))
+
+
+@app.get("/admin")
+def admin_page() -> FileResponse:
+    return FileResponse(os.path.join(_FRONTEND_DIR, "admin.html"))
 
 
 # Serve the static voice-POC assets (index.html, app.js) if present.

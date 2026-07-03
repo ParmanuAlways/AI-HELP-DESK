@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Help Desk — Admin Console</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --ink: #1c2733;
+      --ink-soft: #5a6b7d;
+      --line: #dde4ec;
+      --green: #1a7f37;
+      --blue: #0b62c4;
+      --blue-dark: #094e9d;
+      --red: #c53030;
+      --amber-bg: #fff3d6;
+      --amber-ink: #7a5300;
+      --shadow: 0 10px 30px rgba(28, 39, 51, 0.08);
+      --radius: 20px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #10161d;
+        --card: #1a232e;
+        --ink: #eef3f8;
+        --ink-soft: #9fb0c0;
+        --line: #2c3947;
+        --amber-bg: #3d3115;
+        --amber-ink: #ffd479;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 18px;
+      line-height: 1.55;
+      min-height: 100vh;
+      padding: 2.5rem 1.25rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    main { width: 100%; max-width: 1040px; }
+    header { text-align: center; margin-bottom: 1.75rem; }
+    h1 { font-size: 1.8rem; margin: 0 0 0.3rem; letter-spacing: -0.01em; }
+    .tagline { color: var(--ink-soft); margin: 0; font-size: 1rem; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ---- Login ---- */
+    #loginCard { max-width: 460px; margin: 0 auto; }
+    label { display: block; font-weight: 650; margin: 1rem 0 0.35rem; }
+    input {
+      font: inherit;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--line);
+      background: var(--bg);
+      color: var(--ink);
+    }
+    input:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
+    button {
+      font: inherit; font-size: 1.15rem; font-weight: 700;
+      padding: 0.9rem 1.4rem; border-radius: 999px; border: 0;
+      cursor: pointer; color: #fff; background: var(--blue);
+      transition: background 0.15s ease;
+    }
+    button:hover { background: var(--blue-dark); }
+    button.secondary {
+      background: transparent; color: var(--ink-soft);
+      border: 2px solid var(--line); font-weight: 650;
+    }
+    #loginBtn { width: 100%; margin-top: 1.5rem; }
+    .error { color: var(--red); font-weight: 650; margin: 0.9rem 0 0; min-height: 1.4em; }
+
+    /* ---- Dashboard ---- */
+    #dash { display: none; }
+    .toolbar {
+      display: flex; align-items: center; gap: 1rem;
+      flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .stat {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 0.6rem 1.25rem;
+      font-size: 1rem; color: var(--ink-soft);
+    }
+    .stat b { color: var(--ink); font-size: 1.25rem; margin-right: 0.3rem; }
+    .spacer { flex: 1; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+    th, td { text-align: left; padding: 0.8rem 0.9rem; vertical-align: top; }
+    th {
+      color: var(--ink-soft); font-size: 0.82rem; letter-spacing: 0.05em;
+      text-transform: uppercase; border-bottom: 2px solid var(--line);
+      white-space: nowrap;
+    }
+    tr + tr td { border-top: 1px solid var(--line); }
+    td.num { font-weight: 750; white-space: nowrap; }
+    td.text { min-width: 280px; max-width: 480px; }
+    .badge {
+      display: inline-block; padding: 0.15rem 0.7rem; border-radius: 999px;
+      font-size: 0.85rem; font-weight: 700; white-space: nowrap;
+    }
+    .badge.pending { background: var(--amber-bg); color: var(--amber-ink); }
+    .badge.app { background: #0b62c41a; color: var(--blue); }
+    .muted { color: var(--ink-soft); }
+    .empty { text-align: center; color: var(--ink-soft); padding: 2.5rem 0; font-size: 1.1rem; }
+    footer { color: var(--ink-soft); font-size: 0.9rem; text-align: center; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>🛠 Admin Console</h1>
+      <p class="tagline">Faults reported through the AI Help Desk voice line</p>
+    </header>
+
+    <!-- Login -->
+    <section class="card" id="loginCard" aria-label="Admin login">
+      <label for="user">Username</label>
+      <input id="user" autocomplete="username" />
+      <label for="pass">Password</label>
+      <input id="pass" type="password" autocomplete="current-password" />
+      <p class="error" id="loginError"></p>
+      <button id="loginBtn">🔐 Login</button>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dash">
+      <div class="toolbar">
+        <span class="stat"><b id="statTotal">0</b> total faults</span>
+        <span class="stat"><b id="statPending">0</b> pending review</span>
+        <span class="spacer"></span>
+        <button id="refreshBtn">⟳ Refresh</button>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticket #</th><th>Raised</th><th>Application</th>
+                <th>Fault type</th><th>Severity</th><th>Conf.</th>
+                <th>Status</th><th>Complaint (transcript)</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <p class="empty" id="empty" style="display:none">No faults logged yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>AI Help Desk · admin console · POC (Keycloak SSO in production)</footer>
+  </main>
+
+  <script src="/static/admin.js"></script>
+</body>
+</html>

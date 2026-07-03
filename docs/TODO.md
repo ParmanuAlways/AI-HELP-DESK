@@ -20,8 +20,11 @@ Running list of pending inputs and decisions. Updated as we go.
         See `docs/voice_intake_poc.md` §5a.
   - [ ] Swap stub → real faster-whisper (needs local model + install).
   - [ ] Replace keyword classifier stub → real embed+pgvector+LLM pipeline.
-  - [ ] Persist tickets to Postgres (currently in-process counter).
-  - [ ] Operator review UI before ticket finalise (HITL).
+  - [x] Persist tickets to DB (SQLite dev / Postgres enclave via
+        HELPDESK_DATABASE_URL) — SQLModel Ticket table.
+  - [x] Admin login + faults console at /admin (POC local creds via
+        HELPDESK_ADMIN_USERNAME/PASSWORD; Keycloak SSO in production).
+  - [ ] Operator review actions (approve/edit/close ticket) in admin UI (HITL).
 - [ ] Agentic scope: helpdesk-only vs automation into apps; read-only
       diagnostic probing allowed?; advise-only vs gated remediation.
       See `docs/agentic_workflows.md` §6.

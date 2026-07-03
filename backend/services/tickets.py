@@ -1,27 +1,27 @@
 """Ticket intake service.
 
-POC-level stub: turns a raw complaint (from voice or text) into a
-provisional ticket. Classification here is a lightweight keyword pass —
-a placeholder for the real embed → pgvector search → LLM/agent pipeline
-described in docs/agentic_workflows.md. Kept behind this seam so the
-voice layer never needs to change when the real classifier lands.
+POC-level: turns a raw complaint (from voice or text) into a persisted
+ticket. Classification here is a lightweight keyword pass — a placeholder
+for the real embed → pgvector search → LLM/agent pipeline described in
+docs/agentic_workflows.md. Kept behind this seam so the voice layer never
+needs to change when the real classifier lands.
 """
 from __future__ import annotations
 
-import itertools
+from sqlmodel import Session
 
+from backend.database import engine
+from backend.models import Ticket
 from backend.schemas import Classification
-
-_counter = itertools.count(1)
 
 # Minimal keyword hints just so the POC returns something meaningful.
 # Replaced later by embeddings + LLM classification.
 _APP_HINTS = {
     "eoffice": "eOffice",
+    "e-office": "eOffice",
     "i-key": "eOffice",
     "ikey": "eOffice",
     "cabinet": "eOffice",
-    "login": None,  # ambiguous across apps
 }
 _FAULT_HINTS = {
     "login": "login / authentication",
@@ -38,7 +38,7 @@ _FAULT_HINTS = {
 
 def classify(text: str) -> Classification:
     low = text.lower()
-    app = next((v for k, v in _APP_HINTS.items() if v and k in low), None)
+    app = next((v for k, v in _APP_HINTS.items() if k in low), None)
     fault = next((v for k, v in _FAULT_HINTS.items() if k in low), None)
     hits = sum(1 for k in _FAULT_HINTS if k in low)
     confidence = min(0.3 + 0.2 * hits, 0.9) if fault else 0.1
@@ -51,6 +51,30 @@ def classify(text: str) -> Classification:
     )
 
 
-def next_ticket_number() -> str:
-    # Enclave will use a DB sequence; POC uses an in-process counter.
-    return f"TKT-{next(_counter):05d}"
+def create_ticket(
+    raw_text: str,
+    classification: Classification,
+    language: str | None = None,
+    source: str = "voice",
+    stub_stt: bool = False,
+) -> Ticket:
+    """Persist a provisional ticket and assign its number from the DB id."""
+    with Session(engine) as session:
+        ticket = Ticket(
+            ticket_number="PENDING",
+            raw_text=raw_text,
+            language=language,
+            application=classification.application,
+            fault_type=classification.fault_type,
+            severity=classification.severity,
+            confidence=classification.confidence,
+            status="pending_review",
+            source=source,
+            stub_stt=stub_stt,
+        )
+        session.add(ticket)
+        session.flush()  # allocate id
+        ticket.ticket_number = f"TKT-{ticket.id:05d}"
+        session.commit()
+        session.refresh(ticket)
+        return ticket

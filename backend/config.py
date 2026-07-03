@@ -32,8 +32,18 @@ class Settings(BaseSettings):
     # When true, skip loading whisper and use the stub transcriber (dev).
     stt_stub: bool = True
 
-    # --- Database (PostgreSQL + pgvector) ---
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/helpdesk"
+    # --- Database ---
+    # Dev default: SQLite file (zero setup). Enclave: set
+    # HELPDESK_DATABASE_URL=postgresql+psycopg://...  (Postgres + pgvector).
+    database_url: str = "sqlite:///./helpdesk_dev.db"
+
+    # --- Admin auth (POC only) ---
+    # Local credentials for the POC admin console. In production this is
+    # replaced by Keycloak SSO like the org's other applications.
+    admin_username: str = "admin"
+    admin_password: str = "admin@123"
+    # Sessions expire after this many minutes of no re-login.
+    admin_session_minutes: int = 480
 
     # --- Voice POC ---
     # Where streamed call audio is buffered before transcription.
