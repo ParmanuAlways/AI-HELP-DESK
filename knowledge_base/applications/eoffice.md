@@ -12,7 +12,8 @@
 | Owning Team   | [TBC] |
 | Contact       | [TBC] |
 
-**Authentication**: SSO via Keycloak; identity backed by LDAP directory.
+**Authentication**: Direct LDAP login — **not** integrated with Keycloak
+SSO (exception among the registered applications).
 
 ## 2. Purposes  `→ app_purposes` (embedded)
 
@@ -53,8 +54,7 @@ systems — confirm which apply and add real phrasings from past complaints.
 
 | Depends On | Dependency Nature | When it matters |
 | :---       | :---              | :---            |
-| Keycloak (SSO) | authentication | Login faults expand to Keycloak |
-| LDAP Directory | authentication | Login faults expand to LDAP (credential source) |
+| LDAP Directory | authentication | Login faults expand to LDAP directly (no Keycloak in path) |
 | [TBC] file/document storage | storage | Attachment upload/open faults |
 | [TBC] database server | data | Data loss / save failures |
 | [TBC] network / intranet | connectivity | Unreachable / slowness faults |
@@ -84,8 +84,9 @@ systems — confirm which apply and add real phrasings from past complaints.
 2. Is this NIC eOffice or an in-house build? Which modules are deployed
    (eFile, receipts/dak, leave, KMS)?
 3. Is DSC / digital-signature signing used? (frequent complaint source)
-4. LDAP: same directory that backs Keycloak, or a separate LDAP that
-   eOffice binds to directly? (changes the dependency graph)
+4. Is the LDAP that eOffice binds to the same directory Keycloak
+   federates from for the other apps, or a separate one? (If shared, an
+   LDAP outage hits eOffice *and* all SSO apps — strong root-cause signal.)
 5. Roughly how many users / which units use it? (severity calibration)
 6. What are the 3–5 most frequent real complaints received about it?
 7. Where is it hosted (app server, DB server) — do we register those as

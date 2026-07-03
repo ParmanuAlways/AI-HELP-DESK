@@ -1,7 +1,8 @@
 # Application: Keycloak (SSO)
 
 > Status: **DRAFT — pending owner review.** Shared authentication
-> dependency for all registered applications. When a login-type fault is
+> dependency for registered applications (exception: eOffice, which
+> logs in directly against LDAP and is not on Keycloak currently). When a login-type fault is
 > reported against any app, the dependency expander pulls this in as a
 > possible root cause; if multiple apps report login faults together,
 > Keycloak/LDAP is the probable primary.
