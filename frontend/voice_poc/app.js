@@ -48,7 +48,7 @@ async function startCall() {
       }
     };
     mediaRecorder.start(250); // emit a chunk every 250ms (streaming feel)
-    setStatus("Recording… speak your complaint", true);
+    setStatus("Listening… please speak your complaint", true);
     callBtn.disabled = true;
     endBtn.disabled = false;
     cancelBtn.disabled = false;
@@ -78,7 +78,7 @@ function stopRecorder() {
 }
 
 function endCall() {
-  setStatus("Transcribing…");
+  setStatus("Please wait — preparing your ticket…");
   endBtn.disabled = true;
   cancelBtn.disabled = true;
   stopRecorder();
@@ -101,7 +101,7 @@ function teardown(finalStatus) {
   callBtn.disabled = false;
   endBtn.disabled = true;
   cancelBtn.disabled = true;
-  setStatus(finalStatus || "Idle");
+  setStatus(finalStatus || "Ready when you are");
 }
 
 function showResult(msg) {
@@ -124,6 +124,7 @@ function showResult(msg) {
   }
   transcriptEl.textContent = msg.transcript || "";
   resultCard.style.display = "block";
+  resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 callBtn.addEventListener("click", startCall);
