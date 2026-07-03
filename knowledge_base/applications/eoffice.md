@@ -9,12 +9,17 @@
 | :---          | :---  |
 | Name          | eOffice |
 | Description   | Proprietary (non-NIC) application for day-to-day official correspondence and communication. |
-| Owning Team   | [TBC — name of section/cell] |
+| Owning Team   | eOffice support team |
 | Contact       | IP (intercom) 23137845 |
 
 **Type**: Proprietary / in-house build (not NIC eOffice).
 **Authentication**: Direct LDAP integration — **not** on Keycloak SSO
-(exception among the registered applications).
+(exception among the registered applications). Each user has their own
+personal **I-Key** (physical hardware token) required to open the app.
+
+**Ticket routing**: tickets are raised under the **category = eOffice**
+and routed to the eOffice support team (IP 23137845). The application
+name *is* the routing category.
 
 ## 2. Purposes  `→ app_purposes` (embedded)
 
@@ -94,30 +99,45 @@ separately — English + Hinglish variants are included on purpose.
 
 ## 6. Routing & Escalation
 
+All eOffice tickets route to the **eOffice support team (IP 23137845)**.
+Category = application name.
+
 | Severity | Route To | Notes |
 | :---     | :---     | :---  |
-| [TBC]    | [TBC]    |       |
+| All      | eOffice support team (IP 23137845) | [Severity thresholds TBC] |
 
 ## 7. Known Recurring Issues
 
-- [TBC — e.g. "account locks after N failed attempts, fix = LDAP unlock by admin"]
+- **I-Key not detected** — every user has their own personal I-Key
+  (physical token). Typically a client-side/token issue: reseat/reinsert
+  the I-Key, check the token driver/middleware on the user's machine.
+  `[confirm exact fix steps]`
+- **File not found in inbox/cabinet** — can be a genuine glitch, or the
+  file is misplaced in the database. The eOffice support team locates /
+  recovers it (user supplies the **reference number** + **document type**
+  — letter, note, etc.).
+- **Draft file deleted** — `[TBC: recoverable from backup, or lost?]`
+- **Sluggish to open** — `[TBC: server-side or client-side?]`
 
-## 8. Open Questions
+## 8. Open Questions (remaining)
 
-1. **Owning team name** — the section/cell that supports eOffice
-   (contact IP 23137845 is recorded; need the team name for routing).
-2. **I-Key ↔ signing**: is the file *signing* done with the **same I-Key**
-   that opens the app, or a separate DSC/certificate? (Decides whether
-   "can't sign" and "I-Key not detected" share a root cause.)
-3. **File-not-found**: when a file is missing from inbox/cabinet, is it
-   usually (a) a genuine bug/data issue, or (b) it moved to someone else
-   and the user just needs help locating it? (Changes fault type + fix.)
-4. Is the eOffice LDAP the **same directory** Keycloak federates from for
+1. **I-Key ↔ signing**: is the file *signing* done with the **same personal
+   I-Key** that opens the app? (If yes, "can't sign" and "I-Key not
+   detected" share a root cause and can be classified together.)
+2. Is the eOffice LDAP the **same directory** Keycloak federates from for
    the other apps, or a separate one? (Shared → an LDAP outage hits
    eOffice *and* all SSO apps: strong root-cause signal.)
-5. Roughly **how many users / which units** use it? (severity calibration)
-6. **Known fixes** for the common ones — e.g. I-Key not detected → reinsert
-   / reinstall token driver? Sluggish → server-side or client-side?
-7. Where is it **hosted** (app server, DB server, document storage) — do
+3. Roughly **how many users / which units** use it? (severity calibration)
+4. **Draft deleted** — recoverable from backup, or permanently lost?
+5. **Sluggish** — usually server-side (everyone affected) or client-side
+   (one machine)?
+6. Where is it **hosted** (app server, DB server, document storage) — do
    we register those as separate infrastructure entries so an outage
    there can be flagged as the root cause?
+
+## Resolved
+- Owning team / routing: eOffice support team, IP 23137845, category = app name ✓
+- Type: proprietary (non-NIC) ✓
+- Auth: direct LDAP + per-user I-Key hardware token ✓
+- Features & error catalogue ✓
+- File-not-found is a glitch or DB-misplacement; support team locates it ✓
