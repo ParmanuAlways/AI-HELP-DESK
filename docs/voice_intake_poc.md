@@ -1,6 +1,7 @@
 # Voice Intake POC — Capture Complaints Over a (Simulated) Call
 
-> Status: **DRAFT — approach decision pending (see §3).**
+> Status: **Approach chosen — Browser WebRTC (Option A).** Asterisk/SIP
+> (Option B) deferred to the real-phone integration phase.
 
 ## 1. Goal
 
@@ -22,7 +23,7 @@ real IP phones** with minimal backend change.
 
 ## 3. Approach options (DECISION NEEDED)
 
-### Option A — Browser softphone (WebRTC/WebSocket)  ← fastest POC
+### Option A — Browser softphone (WebRTC/WebSocket)  ← **CHOSEN**
 User opens a web page on their PC, grants mic access, clicks "Call Help
 Desk", speaks. Browser streams audio over WebSocket/WebRTC to the
 FastAPI backend → faster-whisper → ticket.
