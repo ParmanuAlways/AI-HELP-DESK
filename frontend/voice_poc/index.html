@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Help Desk — Voice Intake (POC)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    h1 { font-size: 1.4rem; }
+    .card { border: 1px solid #8883; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    button { font-size: 1rem; padding: 0.6rem 1.1rem; border-radius: 8px; border: 0; cursor: pointer; margin-right: 0.5rem; }
+    #call { background: #1a7f37; color: #fff; }
+    #end { background: #0969da; color: #fff; }
+    #cancel { background: #cf222e; color: #fff; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    #status { font-weight: 600; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #888; margin-right: 6px; vertical-align: middle; }
+    .rec { background: #cf222e; animation: pulse 1s infinite; }
+    @keyframes pulse { 50% { opacity: 0.3; } }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    .muted { color: #8889; font-size: 0.85rem; }
+    .kv { display: grid; grid-template-columns: 130px 1fr; gap: 0.25rem 0.75rem; }
+    .kv div:nth-child(odd) { color: #8889; }
+  </style>
+</head>
+<body>
+  <h1>🎧 AI Help Desk — Voice Intake <span class="muted">(POC)</span></h1>
+  <p class="muted">
+    Simulated call: your browser captures the mic (WebRTC <code>getUserMedia</code>)
+    and streams audio over a WebSocket to the help-desk server, which transcribes
+    it locally and raises a ticket. Fully offline — no cloud.
+  </p>
+
+  <div class="card">
+    <p><span id="dot" class="dot"></span><span id="status">Idle</span></p>
+    <button id="call">📞 Call Help Desk</button>
+    <button id="end" disabled>✅ End &amp; Raise Ticket</button>
+    <button id="cancel" disabled>✖ Cancel</button>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none">
+    <h2 style="font-size:1.1rem;margin-top:0">Ticket raised <span class="muted">(pending operator review)</span></h2>
+    <div class="kv" id="resultKv"></div>
+    <h3 style="font-size:1rem;margin-bottom:0.25rem">Transcript</h3>
+    <pre id="transcript"></pre>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

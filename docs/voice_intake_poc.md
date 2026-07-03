@@ -72,6 +72,30 @@ choice does not leak into business logic.
   the ticket is finalised (STT will not be perfect on code-mixed speech).
 - Stretch: TTS read-back of the ticket number / confirmation (offline).
 
+## 5a. Build status (implemented)
+
+Vertical slice is built and tested end-to-end (mic → WS → STT → ticket):
+
+- `backend/config.py` — settings (LLM/vLLM URL, whisper, DB) via env vars.
+- `backend/services/stt.py` — faster-whisper wrapper with **stub fallback**
+  (`HELPDESK_STT_STUB=true` default) so the pipeline runs without the model.
+- `backend/services/tickets.py` — POC keyword classifier + ticket numbering
+  (seam for the real embed→pgvector→LLM/agent pipeline).
+- `backend/routers/voice.py` — `WS /api/voice/ws` (ready → audio chunks →
+  end → result), plus cancel and empty-audio handling.
+- `backend/main.py` — app, CORS, `/health`, serves the demo page.
+- `frontend/voice_poc/{index.html,app.js}` — getUserMedia + MediaRecorder
+  streaming over WebSocket; shows transcript + provisional ticket.
+
+Run: `pip install -r backend/requirements.txt` (or minimal set) then
+`uvicorn backend.main:app --host 0.0.0.0 --port 8077` and open the host
+in a browser on the caller PC. Set `HELPDESK_STT_STUB=false` +
+`HELPDESK_WHISPER_MODEL=<local path>` to use the real model.
+
+Chosen sub-approach: **getUserMedia + MediaRecorder(webm/opus) over a
+WebSocket**; server concatenates chunks and transcribes per-utterance on
+"end" (simplest, accurate; live streaming transcription deferred).
+
 ## 6. Open questions
 
 1. **Which approach — A, B, or C?** (Recommendation: **B if the real IP

@@ -14,8 +14,14 @@ Running list of pending inputs and decisions. Updated as we go.
 ## Decisions needed
 - [x] **Voice intake approach** — CHOSEN: browser WebRTC. Asterisk/SIP
       deferred to real-phone phase. See `docs/voice_intake_poc.md` §3.
-  - [ ] Sub-decision: `getUserMedia + WebSocket` streaming vs full
-        `RTCPeerConnection` (aiortc) on the server. See §3 notes.
+  - [x] Sub-decision: `getUserMedia + MediaRecorder + WebSocket`
+        (per-utterance transcription). Built & tested.
+  - [x] Voice POC vertical slice implemented (mic→WS→STT stub→ticket).
+        See `docs/voice_intake_poc.md` §5a.
+  - [ ] Swap stub → real faster-whisper (needs local model + install).
+  - [ ] Replace keyword classifier stub → real embed+pgvector+LLM pipeline.
+  - [ ] Persist tickets to Postgres (currently in-process counter).
+  - [ ] Operator review UI before ticket finalise (HITL).
 - [ ] Agentic scope: helpdesk-only vs automation into apps; read-only
       diagnostic probing allowed?; advise-only vs gated remediation.
       See `docs/agentic_workflows.md` §6.
