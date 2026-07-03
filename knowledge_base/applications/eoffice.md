@@ -8,12 +8,13 @@
 | Field         | Value |
 | :---          | :---  |
 | Name          | eOffice |
-| Description   | Application for day-to-day official correspondence — electronic file movement, noting, and drafting. |
-| Owning Team   | [TBC] |
-| Contact       | [TBC] |
+| Description   | Proprietary (non-NIC) application for day-to-day official correspondence and communication. |
+| Owning Team   | [TBC — name of section/cell] |
+| Contact       | IP (intercom) 23137845 |
 
-**Authentication**: Direct LDAP login — **not** integrated with Keycloak
-SSO (exception among the registered applications).
+**Type**: Proprietary / in-house build (not NIC eOffice).
+**Authentication**: Direct LDAP integration — **not** on Keycloak SSO
+(exception among the registered applications).
 
 ## 2. Purposes  `→ app_purposes` (embedded)
 
